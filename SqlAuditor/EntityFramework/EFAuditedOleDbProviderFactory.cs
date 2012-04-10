@@ -1,6 +1,6 @@
 ﻿using System.Data.OleDb;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     /// <summary>
     /// Specific implementation of EFAuditedDbProviderFactory&lt;OleDbFactory&gt; to enable profiling

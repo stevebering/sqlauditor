@@ -1,15 +1,15 @@
 using System.Data.Common;
 using System.Data.Common.CommandTrees;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     public class AuditedDbProviderServices
         : DbProviderServices
     {
         private readonly DbProviderServices _wrapped;
-        private readonly IDbAuditor _auditor;
+        private readonly ISqlAuditor _auditor;
 
-        public AuditedDbProviderServices(DbProviderServices tail, IDbAuditor auditor)
+        public AuditedDbProviderServices(DbProviderServices tail, ISqlAuditor auditor)
         {
             this._wrapped = tail;
             this._auditor = auditor;

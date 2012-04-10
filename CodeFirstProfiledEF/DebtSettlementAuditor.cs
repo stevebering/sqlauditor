@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Data.Common;
-using CodeFirstProfiledEF.Framework;
-using CodeFirstProfiledEF.Models;
+using Meracord.Data.SqlAuditor;
 
 namespace CodeFirstProfiledEF
 {
     public abstract class DebtSettlementAuditor
-        : IDbAuditor
+        : ISqlAuditor
     {
         public bool IsActive
         {
@@ -57,17 +56,17 @@ namespace CodeFirstProfiledEF
 
         public static bool IsUpdate(this DbCommand command)
         {
-            return Is(command, "UPDATE");
+            return Is(command, "UPDATE ");
         }
 
         public static bool IsInsert(this DbCommand command)
         {
-            return Is(command, "INSERT");
+            return Is(command, "INSERT ");
         }
 
         public static bool IsDelete(this DbCommand command)
         {
-            return Is(command, "DELETE");
+            return Is(command, "DELETE ");
         }
 
         public static bool Is(DbCommand command, string commandType)

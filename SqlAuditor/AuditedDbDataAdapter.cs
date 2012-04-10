@@ -2,13 +2,13 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
     public class AuditedDbDataAdapter : DbDataAdapter
     {
         private static readonly DbDataReader TokenReader = new DataTableReader(new DataTable());
 
-        private readonly IDbAuditor _auditor;
+        private readonly ISqlAuditor _auditor;
         private readonly IDbDataAdapter _adapter;
 
         private IDbCommand _selectCommand;
@@ -16,15 +16,14 @@ namespace CodeFirstProfiledEF.Framework
         private IDbCommand _updateCommand;
         private IDbCommand _deleteCommand;
 
-        public AuditedDbDataAdapter(IDbDataAdapter wrappedAdapter, IDbAuditor auditor = null)
+        public AuditedDbDataAdapter(IDbDataAdapter wrappedAdapter, ISqlAuditor auditor = null)
         {
-            if (wrappedAdapter == null)
-            {
+            if (wrappedAdapter == null) {
                 throw new ArgumentNullException("wrappedAdapter");
             }
 
             _adapter = wrappedAdapter;
-            _auditor = auditor ?? DbAuditor.Current;
+            _auditor = auditor ?? SqlAuditor.Current;
         }
 
         /// <summary>
@@ -59,25 +58,21 @@ namespace CodeFirstProfiledEF.Framework
              * SqlDataAdapter type and would thus work fine with this workaround.
              */
 
-            if (_auditor == null || !_auditor.IsActive || !(_selectCommand is DbCommand))
-            {
+            if (_auditor == null || !(_selectCommand is DbCommand)) {
                 return _adapter.Fill(dataSet);
             }
 
             int result;
             var cmd = (DbCommand)_selectCommand;
             _auditor.ExecuteStart(cmd, ExecuteType.Reader);
-            try
-            {
+            try {
                 result = _adapter.Fill(dataSet);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 _auditor.OnError(cmd, ExecuteType.Reader, e);
                 throw;
             }
-            finally
-            {
+            finally {
                 _auditor.ExecuteFinish(cmd, ExecuteType.Reader, TokenReader);
             }
 

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
-    public interface IDbAuditor
+    public interface ISqlAuditor
     {
-        /// <summary> 
-        /// True if the auditor instance is active 
-        /// </summary>  
-        bool IsActive { get; }
-
         /// <summary> 
         /// Called when a command starts executing 
         /// </summary> 

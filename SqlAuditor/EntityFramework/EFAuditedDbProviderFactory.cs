@@ -1,46 +1,28 @@
-﻿using System.Data.Common;
+using System;
+using System.Data.Common;
+using System.Reflection;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
-    public class AuditedDbProviderFactory : DbProviderFactory
+    public class EFAuditedDbProviderFactory<T>
+        : DbProviderFactory, IServiceProvider where T : DbProviderFactory
     {
         /// <summary>
         /// Every provider factory must have an Instance public field
         /// </summary>
-        public static AuditedDbProviderFactory Instance = new AuditedDbProviderFactory();
+        public static EFAuditedDbProviderFactory<T> Instance = new EFAuditedDbProviderFactory<T>();
 
-        private IDbAuditor _auditor;
-        private DbProviderFactory _tail;
+        private readonly T _tail;
 
         /// <summary>
         /// Used for db provider apis internally 
         /// </summary>
-        private AuditedDbProviderFactory()
+        protected EFAuditedDbProviderFactory()
         {
-
+            FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+            this._tail = (T)field.GetValue(null);
         }
-
-        /// <summary>
-        /// Allow to re-init the auditor factory.
-        /// </summary>
-        /// <param name="auditor"> </param>
-        /// <param name="tail"></param>
-        public void InitProfiledDbProviderFactory(IDbAuditor auditor, DbProviderFactory tail)
-        {
-            this._auditor = auditor;
-            this._tail = tail;
-        }
-
-        /// <summary>
-        /// proxy
-        /// </summary>
-        /// <param name="auditor"></param>
-        /// <param name="tail"></param>
-        public AuditedDbProviderFactory(IDbAuditor auditor, DbProviderFactory tail)
-        {
-            this._auditor = auditor;
-            this._tail = tail;
-        }
+        
         /// <summary>
         /// proxy
         /// </summary>
@@ -63,14 +45,14 @@ namespace CodeFirstProfiledEF.Framework
         /// </summary>
         public override DbCommand CreateCommand()
         {
-            return new AuditedDbCommand(_tail.CreateCommand(), null, _auditor);
+            return new AuditedDbCommand(_tail.CreateCommand(), null, SqlAuditor.Current);
         }
         /// <summary>
         /// proxy
         /// </summary>
         public override DbConnection CreateConnection()
         {
-            return new AuditedDbConnection(_tail.CreateConnection(), _auditor);
+            return new EFAuditedDbConnection(_tail.CreateConnection(), SqlAuditor.Current);
         }
         /// <summary>
         /// proxy
@@ -106,6 +88,24 @@ namespace CodeFirstProfiledEF.Framework
         public override System.Security.CodeAccessPermission CreatePermission(System.Security.Permissions.PermissionState state)
         {
             return _tail.CreatePermission(state);
+        }
+
+        /// <summary>
+        /// Extension mechanism for additional services;  
+        /// </summary>
+        /// <returns>requested service provider or null.</returns>
+        object IServiceProvider.GetService(Type serviceType)
+        {
+            IServiceProvider tailProvider = _tail as IServiceProvider;
+            if (tailProvider == null) return null;
+            var svc = tailProvider.GetService(serviceType);
+            if (svc == null) return null;
+
+            if (serviceType == typeof(DbProviderServices))
+            {
+                svc = new AuditedDbProviderServices((DbProviderServices)svc, SqlAuditor.Current);
+            }
+            return svc;
         }
     }
 }

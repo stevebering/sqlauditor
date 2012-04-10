@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity.Infrastructure;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     public class AuditedDbConnectionFactory : IDbConnectionFactory
     {
@@ -22,7 +22,7 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
         /// <returns></returns>
         public System.Data.Common.DbConnection CreateConnection(string nameOrConnectionString)
         {
-            return new EFAuditedDbConnection(_wrapped.CreateConnection(nameOrConnectionString), DbAuditor.Current);
+            return new EFAuditedDbConnection(_wrapped.CreateConnection(nameOrConnectionString), SqlAuditor.Current);
         }
     }
 }

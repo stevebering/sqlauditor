@@ -1,6 +1,6 @@
 ﻿using System.Data.Odbc;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     /// <summary>
     /// Specific implementation of EFProfiledDbProviderFactory&lt;OdbcFactory&gt; to enable profiling

@@ -1,6 +1,6 @@
 using System;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     internal class EFProviderUtilities
     {

@@ -5,7 +5,7 @@ using System.Data.EntityClient;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
     public static class ObjectContextUtils
     {
@@ -43,7 +43,7 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
         /// </summary>
         public static T GetAuditedContext<T>() where T : System.Data.Objects.ObjectContext
         {
-            var conn = new EFAuditedDbConnection(GetStoreConnection<T>(), DbAuditor.Current);
+            var conn = new EFAuditedDbConnection(GetStoreConnection<T>(), SqlAuditor.Current);
             return CreateObjectContext<T>(conn);
         }
 
@@ -59,8 +59,7 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
 
             // If the initial connection string refers to an entry in the configuration, load that as the builder.
             object configName;
-            if (builder.TryGetValue("name", out configName))
-            {
+            if (builder.TryGetValue("name", out configName)) {
                 var configEntry = ConfigurationManager.ConnectionStrings[configName.ToString()];
                 builder = new EntityConnectionStringBuilder(configEntry.ConnectionString);
             }
@@ -70,8 +69,7 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
 
             // Build the new connection.
             DbConnection tempConnection = null;
-            try
-            {
+            try {
                 tempConnection = factory.CreateConnection();
                 tempConnection.ConnectionString = builder.ProviderConnectionString;
 
@@ -79,11 +77,9 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
                 tempConnection = null;
                 return connection;
             }
-            finally
-            {
+            finally {
                 // If creating of the connection failed, dispose the connection.
-                if (tempConnection != null)
-                {
+                if (tempConnection != null) {
                     tempConnection.Dispose();
                 }
             }
@@ -96,12 +92,10 @@ namespace CodeFirstProfiledEF.Framework.EntityFramework
             {
                 Type[] argTypes = new Type[] { typeof(TArg) };
                 var ctor = typeof(TType).GetConstructor(argTypes);
-                if (ctor == null)
-                {
+                if (ctor == null) {
                     Ctor = x => { throw new InvalidOperationException("No suitable constructor defined"); };
                 }
-                else
-                {
+                else {
                     var dm = new DynamicMethod("ctor", typeof(TType), argTypes);
                     var il = dm.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);

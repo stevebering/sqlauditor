@@ -2,17 +2,16 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
     public class AuditedDbDataReader : DbDataReader
     {
         private readonly DbConnection _connection;
         private readonly DbDataReader _reader;
-        private readonly IDbAuditor _auditor;
+        private readonly ISqlAuditor _auditor;
 
-        public AuditedDbDataReader(DbDataReader reader, DbConnection connection, IDbAuditor auditor)
+        public AuditedDbDataReader(DbDataReader reader, DbConnection connection, ISqlAuditor auditor)
         {
             _reader = reader;
             _connection = connection;

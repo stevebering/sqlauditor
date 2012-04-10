@@ -1,23 +1,21 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
-using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
     public class AuditedDbConnection
         : DbConnection, ICloneable
     {
         private DbConnection _connection;
-        private IDbAuditor _auditor;
+        private ISqlAuditor _auditor;
 
-        public IDbAuditor Auditor
+        public ISqlAuditor Auditor
         {
             get { return _auditor; }
         }
 
-        public AuditedDbConnection(DbConnection connection, IDbAuditor auditor)
+        public AuditedDbConnection(DbConnection connection, ISqlAuditor auditor)
         {
             if (connection == null)
                 throw new ArgumentNullException("connection");

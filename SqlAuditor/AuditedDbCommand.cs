@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
     [System.ComponentModel.DesignerCategory("")]
     public class AuditedDbCommand : DbCommand, ICloneable
@@ -13,7 +13,7 @@ namespace CodeFirstProfiledEF.Framework
         private DbCommand _command;
         private DbConnection _connection;
         private DbTransaction _transaction;
-        private IDbAuditor _auditor;
+        private ISqlAuditor _auditor;
 
         private bool _bindByName;
         /// <summary>
@@ -25,10 +25,8 @@ namespace CodeFirstProfiledEF.Framework
             get { return _bindByName; }
             set
             {
-                if (_bindByName != value)
-                {
-                    if (_command != null)
-                    {
+                if (_bindByName != value) {
+                    if (_command != null) {
                         var inner = GetBindByName(_command.GetType());
                         if (inner != null) inner(_command, value);
                     }
@@ -42,8 +40,7 @@ namespace CodeFirstProfiledEF.Framework
         {
             if (commandType == null) return null; // Garbage In/Garbage Out
             Action<IDbCommand, bool> action;
-            if (Link<Type, Action<IDbCommand, bool>>.TryGet(_bindByNameCache, commandType, out action))
-            {
+            if (Link<Type, Action<IDbCommand, bool>>.TryGet(_bindByNameCache, commandType, out action)) {
                 return action;
             }
             var prop = commandType.GetProperty("BindByName", BindingFlags.Public | BindingFlags.Instance);
@@ -53,8 +50,7 @@ namespace CodeFirstProfiledEF.Framework
             if (prop != null && prop.CanWrite && prop.PropertyType == typeof(bool)
                 && ((indexers = prop.GetIndexParameters()) == null || indexers.Length == 0)
                 && (setter = prop.GetSetMethod()) != null
-                )
-            {
+                ) {
                 var method = new DynamicMethod(commandType.Name + "_BindByName", null, new[] { typeof(IDbCommand), typeof(bool) });
                 var il = method.GetILGenerator();
                 il.Emit(OpCodes.Ldarg_0);
@@ -69,7 +65,7 @@ namespace CodeFirstProfiledEF.Framework
             return action;
         }
 
-        public AuditedDbCommand(DbCommand command, DbConnection connection, IDbAuditor auditor)
+        public AuditedDbCommand(DbCommand command, DbConnection connection, ISqlAuditor auditor)
         {
             if (command == null)
                 throw new ArgumentNullException("command");
@@ -77,8 +73,7 @@ namespace CodeFirstProfiledEF.Framework
             _command = command;
             _connection = connection;
 
-            if (auditor != null)
-            {
+            if (auditor != null) {
                 _auditor = auditor;
             }
         }
@@ -108,9 +103,8 @@ namespace CodeFirstProfiledEF.Framework
             {
                 // TODO: we need a way to grab the IDbProfiler which may not be the same as the MiniProfiler, it could be wrapped
                 // allow for command reuse, it is clear the connection is going to need to be reset
-                if (DbAuditor.Current != null)
-                {
-                    _auditor = DbAuditor.Current;
+                if (SqlAuditor.Current != null) {
+                    _auditor = SqlAuditor.Current;
                 }
 
                 _connection = value;
@@ -149,25 +143,21 @@ namespace CodeFirstProfiledEF.Framework
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            if (_auditor == null || !_auditor.IsActive)
-            {
+            if (_auditor == null) {
                 return _command.ExecuteReader(behavior);
             }
 
             DbDataReader result = null;
             _auditor.ExecuteStart(this, ExecuteType.Reader);
-            try
-            {
+            try {
                 result = _command.ExecuteReader(behavior);
                 result = new AuditedDbDataReader(result, _connection, _auditor);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 _auditor.OnError(this, ExecuteType.Reader, e);
                 throw;
             }
-            finally
-            {
+            finally {
                 _auditor.ExecuteFinish(this, ExecuteType.Reader, result);
             }
 
@@ -176,24 +166,20 @@ namespace CodeFirstProfiledEF.Framework
 
         public override int ExecuteNonQuery()
         {
-            if (_auditor == null || !_auditor.IsActive)
-            {
+            if (_auditor == null) {
                 return _command.ExecuteNonQuery();
             }
 
             int result;
             _auditor.ExecuteStart(this, ExecuteType.NonQuery);
-            try
-            {
+            try {
                 result = _command.ExecuteNonQuery();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 _auditor.OnError(this, ExecuteType.NonQuery, e);
                 throw;
             }
-            finally
-            {
+            finally {
                 _auditor.ExecuteFinish(this, ExecuteType.NonQuery, null);
             }
 
@@ -202,24 +188,20 @@ namespace CodeFirstProfiledEF.Framework
 
         public override object ExecuteScalar()
         {
-            if (_auditor == null || !_auditor.IsActive)
-            {
+            if (_auditor == null) {
                 return _command.ExecuteScalar();
             }
 
             object result;
             _auditor.ExecuteStart(this, ExecuteType.Scalar);
-            try
-            {
+            try {
                 result = _command.ExecuteScalar();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 _auditor.OnError(this, ExecuteType.Scalar, e);
                 throw;
             }
-            finally
-            {
+            finally {
                 _auditor.ExecuteFinish(this, ExecuteType.Scalar, null);
             }
 
@@ -243,8 +225,7 @@ namespace CodeFirstProfiledEF.Framework
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _command != null)
-            {
+            if (disposing && _command != null) {
                 _command.Dispose();
             }
             _command = null;

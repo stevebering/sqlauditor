@@ -1,26 +1,19 @@
 using System;
 using System.Data.Common;
-using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
-    public abstract class DbAuditor
-        : IDbAuditor
+    public abstract class SqlAuditor
+        : ISqlAuditor
     {
-        private bool _isActive = false;
-        private static IDbAuditor _auditor;
+        private static ISqlAuditor _auditor;
 
-        public bool IsActive
-        {
-            get { return _isActive; }
-        }
-
-        public static IDbAuditor Current
+        public static ISqlAuditor Current
         {
             get { return _auditor; }
         }
 
-        internal static void SetCurrentAuditor(IDbAuditor auditor)
+        internal static void SetCurrentAuditor(ISqlAuditor auditor)
         {
             _auditor = auditor;
         }

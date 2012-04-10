@@ -1,4 +1,4 @@
-namespace CodeFirstProfiledEF.Framework
+namespace Meracord.Data.SqlAuditor
 {
     /// <summary> 
     /// Categories of sql statements. 

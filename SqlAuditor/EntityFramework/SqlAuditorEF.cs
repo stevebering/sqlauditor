@@ -6,18 +6,18 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 
-namespace CodeFirstProfiledEF.Framework.EntityFramework
+namespace Meracord.Data.SqlAuditor.EntityFramework
 {
-    public partial class DbAuditorEF
+    public class SqlAuditorEF
     {
-        public static void Initialize(IDbAuditor auditor, bool supportExplicitConnectionStrings = true)
+        public static void Initialize(ISqlAuditor auditor, bool supportExplicitConnectionStrings = true)
         {
             Initialize(auditor, false, supportExplicitConnectionStrings);
         }
 
-        public static void Initialize(IDbAuditor auditor, bool applyEFHack, bool supportExplicitConnectionStrings)
+        public static void Initialize(ISqlAuditor auditor, bool applyEFHack, bool supportExplicitConnectionStrings)
         {
-            DbAuditor.SetCurrentAuditor(auditor);
+            SqlAuditor.SetCurrentAuditor(auditor);
 
             if (supportExplicitConnectionStrings && (applyEFHack || IsEF41HackRequired())) {
                 EFProviderUtilities.UseEF41Hack();
