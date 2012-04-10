@@ -4,9 +4,8 @@ using System.Data.Common;
 using System.Data.EntityClient;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Web.Configuration;
 
-namespace CodeFirstProfiledEF.Models.EntityFramework
+namespace CodeFirstProfiledEF.Framework.EntityFramework
 {
     public static class ObjectContextUtils
     {

@@ -1,0 +1,62 @@
+﻿@model IEnumerable<CodeFirstProfiledEF.Controllers.HomeController.AccountListItemViewModel>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    title</h2>
+@using (Html.BeginForm()) {
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    AccountNumber
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Lock
+                </th>
+                <th>
+                    Type
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.ActionLink("edit", "Edit", new { id = item.AccountID })
+                    </td>
+                    <td>@item.AccountNumber
+                    </td>
+                    <td>
+                        @item.AccountStatusTypeName
+                    </td>
+                    <td>
+                        @item.AccountLockTypeName
+                    </td>
+                    <td>
+                        @item.AccountTypeName
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<style type="text/css" media="screen">
+    table {
+        width: 600px;
+        padding: 5px;
+        border-collapse: collapse;
+        border: 1px solid #d5d5d5;
+    }
+    
+    td, th {
+        border: 1px solid #d5d5d5;
+    }
+</style>

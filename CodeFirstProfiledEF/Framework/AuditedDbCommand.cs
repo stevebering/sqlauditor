@@ -3,8 +3,9 @@ using System.Data;
 using System.Data.Common;
 using System.Reflection;
 using System.Reflection.Emit;
+using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     [System.ComponentModel.DesignerCategory("")]
     public class AuditedDbCommand : DbCommand, ICloneable

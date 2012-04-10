@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     public class AuditedDbDataReader : DbDataReader
     {

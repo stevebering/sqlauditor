@@ -2,7 +2,7 @@ using System;
 using System.Data.Common;
 using System.Reflection;
 
-namespace CodeFirstProfiledEF.Models.EntityFramework
+namespace CodeFirstProfiledEF.Framework.EntityFramework
 {
     public class EFAuditedDbConnection :
         AuditedDbConnection

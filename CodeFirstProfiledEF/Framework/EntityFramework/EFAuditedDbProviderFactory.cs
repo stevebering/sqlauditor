@@ -2,7 +2,7 @@ using System;
 using System.Data.Common;
 using System.Reflection;
 
-namespace CodeFirstProfiledEF.Models.EntityFramework
+namespace CodeFirstProfiledEF.Framework.EntityFramework
 {
     public class EFAuditedDbProviderFactory<T>
         : DbProviderFactory, IServiceProvider where T : DbProviderFactory
@@ -22,8 +22,7 @@ namespace CodeFirstProfiledEF.Models.EntityFramework
             FieldInfo field = typeof(T).GetField("Instance", BindingFlags.Public | BindingFlags.Static);
             this.tail = (T)field.GetValue(null);
         }
-
-
+        
         /// <summary>
         /// proxy
         /// </summary>
@@ -53,7 +52,7 @@ namespace CodeFirstProfiledEF.Models.EntityFramework
         /// </summary>
         public override DbConnection CreateConnection()
         {
-            return new AuditedDbConnection(tail.CreateConnection(), DbAuditor.Current);
+            return new EFAuditedDbConnection(tail.CreateConnection(), DbAuditor.Current);
         }
         /// <summary>
         /// proxy

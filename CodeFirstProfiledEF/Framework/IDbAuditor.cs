@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     public interface IDbAuditor
     {

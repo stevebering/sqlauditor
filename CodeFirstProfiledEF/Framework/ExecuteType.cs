@@ -1,4 +1,4 @@
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     /// <summary> 
     /// Categories of sql statements. 

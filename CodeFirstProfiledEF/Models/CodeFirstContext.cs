@@ -7,28 +7,43 @@ using System.Linq;
 namespace CodeFirstProfiledEF.Models
 {
     public class CodeFirstContext
-        : DbContext
+        : DbContext, ICodeFirstContext
     {
-        public override int SaveChanges()
+        public CodeFirstContext()
+            : base("DebtSettlement")
         {
-            var context = GetObjectContext();
-            var changes = context.ObjectStateManager
-                .GetObjectStateEntries(EntityState.Deleted | EntityState.Modified | EntityState.Added).ToList();
-            if (changes.Any())
-            {
-                context.ExecuteFunction("dbo.fnStartAuditUser", new ObjectParameter("username", "jdoe"));
-            }
-            int changesSaved = base.SaveChanges();
-            if (changes.Any())
-            {
-                context.ExecuteFunction("dbo.fnEndAuditUser", new ObjectParameter("username", "jdoe"));
-            }
-            return changesSaved;
+            Database.SetInitializer(new DoNothingDbInitializer());
         }
 
         private ObjectContext GetObjectContext()
         {
             return ((IObjectContextAdapter)this).ObjectContext;
         }
+
+        public IDbSet<Account> Accounts { get; set; }
+        public IDbSet<AccountStatusType> AccountStatusTypes { get; set; }
+        public IDbSet<AccountLockType> AccountLockTypes { get; set; }
+        public IDbSet<AccountType> AccountTypes { get; set; }
+        public IDbSet<Contact> Contacts { get; set; }
+
+        private class DoNothingDbInitializer
+            : IDatabaseInitializer<CodeFirstContext>
+        {
+            public void InitializeDatabase(CodeFirstContext context)
+            {
+
+            }
+        }
+    }
+
+    public interface ICodeFirstContext
+    {
+        IDbSet<Account> Accounts { get; set; }
+        IDbSet<AccountStatusType> AccountStatusTypes { get; set; }
+        IDbSet<AccountLockType> AccountLockTypes { get; set; }
+        IDbSet<AccountType> AccountTypes { get; set; }
+        IDbSet<Contact> Contacts { get; set; }
+
+        int SaveChanges();
     }
 }

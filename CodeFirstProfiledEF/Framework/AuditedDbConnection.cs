@@ -1,8 +1,10 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
+using CodeFirstProfiledEF.Models;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     public class AuditedDbConnection
         : DbConnection, ICloneable
@@ -23,8 +25,7 @@ namespace CodeFirstProfiledEF.Models
             _connection = connection;
             _connection.StateChange += StateChangeHandler;
 
-            if (auditor != null)
-            {
+            if (auditor != null) {
                 _auditor = auditor;
             }
         }
@@ -122,8 +123,7 @@ namespace CodeFirstProfiledEF.Models
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _connection != null)
-            {
+            if (disposing && _connection != null) {
                 _connection.StateChange -= StateChangeHandler;
                 _connection.Dispose();
             }
@@ -141,8 +141,7 @@ namespace CodeFirstProfiledEF.Models
         public AuditedDbConnection Clone()
         {
             ICloneable tail = _connection as ICloneable;
-            if (tail == null)
-            {
+            if (tail == null) {
                 throw new NotSupportedException(
                     string.Format("Underlying {0} is not cloneable", _connection.GetType().Name));
             }
@@ -152,6 +151,15 @@ namespace CodeFirstProfiledEF.Models
         object ICloneable.Clone()
         {
             return Clone();
+        }
+
+        protected override DbProviderFactory DbProviderFactory
+        {
+            get
+            {
+                var factory = base.DbProviderFactory;
+                return factory;
+            }
         }
     }
 }

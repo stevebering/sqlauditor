@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework
 {
     public class AuditedDbTransaction
         : DbTransaction

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Data.Common;
-using System.Data.Entity.Infrastructure;
-using System.Reflection;
+﻿using System.Data.Entity.Infrastructure;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework.EntityFramework
 {
-    /// <summary>
-    /// Connection factory used for EF Code First DbContext API
-    /// </summary>
     public class AuditedDbConnectionFactory : IDbConnectionFactory
     {
-        private readonly IDbConnectionFactory _wrapped;
+        readonly IDbConnectionFactory _wrapped;
 
         /// <summary>
         /// Create a profiled connection factory
@@ -28,7 +22,7 @@ namespace CodeFirstProfiledEF.Models
         /// <returns></returns>
         public System.Data.Common.DbConnection CreateConnection(string nameOrConnectionString)
         {
-            return new AuditedDbConnection(_wrapped.CreateConnection(nameOrConnectionString), DbAuditor.Current);
+            return new EFAuditedDbConnection(_wrapped.CreateConnection(nameOrConnectionString), DbAuditor.Current);
         }
     }
 }

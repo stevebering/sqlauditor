@@ -1,7 +1,7 @@
 using System.Data.Common;
 using System.Data.Common.CommandTrees;
 
-namespace CodeFirstProfiledEF.Models
+namespace CodeFirstProfiledEF.Framework.EntityFramework
 {
     public class AuditedDbProviderServices
         : DbProviderServices

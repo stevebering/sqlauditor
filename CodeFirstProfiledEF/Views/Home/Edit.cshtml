@@ -1,0 +1,56 @@
+﻿@model CodeFirstProfiledEF.Controllers.HomeController.AccountListItemViewModel
+@{
+    ViewBag.Title = "title";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>
+    title</h2>
+@using (Html.BeginForm()) {
+    <table>
+        <tbody>
+            <tr>
+                <th>
+                    @Html.LabelFor(x => x.AccountID)
+                </th>
+                <td>
+                    @Html.DisplayTextFor(x => x.AccountID)
+                    @Html.HiddenFor(x => x.AccountID)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(x => x.AccountNumber)
+                </th>
+                <td>
+                    @Html.DisplayTextFor(x => x.AccountNumber)
+                    @Html.HiddenFor(x => x.AccountNumber)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(x => x.AccountStatusTypeID)
+                </th>
+                <td>
+                    @Html.DropDownListFor(x => x.AccountStatusTypeID, Model.StatusTypes)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(x => x.AccountLockTypeID)
+                </th>
+                <td>
+                    @Html.DropDownListFor(x => x.AccountLockTypeID, Model.LockTypes)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(x => x.AccountTypeID)
+                </th>
+                <td>
+                    @Html.DropDownListFor(x => x.AccountTypeID, Model.AccountTypes)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <input type="submit" id="submit" name="submit" value="Submit" />
+}
